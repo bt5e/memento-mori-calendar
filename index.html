@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Calendar - 90 Years in Weeks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .input-section label {
+            font-size: 1.1em;
+            color: #333;
+            margin-right: 15px;
+        }
+
+        .input-section input[type="date"] {
+            padding: 10px 15px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-right: 15px;
+        }
+
+        .input-section button {
+            padding: 10px 25px;
+            font-size: 1em;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .input-section button:hover {
+            background: #0056b3;
+        }
+
+        .stats {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .calendar {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 30px;
+        }
+
+        .year-row {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .year-marker {
+            min-width: 50px;
+            text-align: right;
+            padding-right: 10px;
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .weeks-container {
+            display: flex;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .week {
+            width: 12px;
+            height: 12px;
+            background: #e0e0e0;
+            border: 1px solid #ccc;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .week:hover {
+            border-color: #999;
+            transform: scale(1.2);
+        }
+
+        .week.filled {
+            background: #ff6b6b;
+        }
+
+        .week.current {
+            background: #4ecdc4;
+            border-color: #2ba89f;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .legend-box.unfilled {
+            background: #e0e0e0;
+        }
+
+        .legend-box.filled {
+            background: #ff6b6b;
+        }
+
+        .legend-box.current {
+            background: #4ecdc4;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .week {
+                width: 8px;
+                height: 8px;
+            }
+
+            .year-marker {
+                min-width: 35px;
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Life Calendar</h1>
+        <p class="subtitle">90 Years of Your Life in Weeks</p>
+
+        <div class="input-section">
+            <label for="birthday">Enter your birthday:</label>
+            <input type="date" id="birthday" max="9999-12-31">
+            <button onclick="updateCalendar()">Update Calendar</button>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="calendar" id="calendar"></div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box unfilled"></div>
+                <span>Weeks Ahead</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box filled"></div>
+                <span>Weeks Lived</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box current"></div>
+                <span>Current Week</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEEKS_PER_YEAR = 52;
+        const TOTAL_YEARS = 90;
+
+        function generateCalendar() {
+            const calendarDiv = document.getElementById('calendar');
+            calendarDiv.innerHTML = '';
+
+            for (let year = 0; year < TOTAL_YEARS; year++) {
+                const yearRow = document.createElement('div');
+                yearRow.className = 'year-row';
+
+                // Add year marker every 5 years
+                const yearMarker = document.createElement('div');
+                yearMarker.className = 'year-marker';
+                if (year % 5 === 0) {
+                    yearMarker.textContent = `${year}`;
+                }
+                yearRow.appendChild(yearMarker);
+
+                // Create weeks container
+                const weeksContainer = document.createElement('div');
+                weeksContainer.className = 'weeks-container';
+
+                // Add 52 weeks for this year
+                for (let week = 0; week < WEEKS_PER_YEAR; week++) {
+                    const weekBox = document.createElement('div');
+                    weekBox.className = 'week';
+                    weekBox.dataset.year = year;
+                    weekBox.dataset.week = week;
+                    weekBox.title = `Year ${year}, Week ${week + 1}`;
+                    weeksContainer.appendChild(weekBox);
+                }
+
+                yearRow.appendChild(weeksContainer);
+                calendarDiv.appendChild(yearRow);
+            }
+        }
+
+        function updateCalendar() {
+            const birthdayInput = document.getElementById('birthday');
+            const birthday = birthdayInput.value;
+
+            if (!birthday) {
+                alert('Please enter your birthday');
+                return;
+            }
+
+            const birthDate = new Date(birthday);
+            const today = new Date();
+
+            // Calculate weeks lived
+            const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+            const weeksLived = Math.floor((today - birthDate) / msPerWeek);
+            const totalWeeks = TOTAL_YEARS * WEEKS_PER_YEAR;
+            const weeksRemaining = totalWeeks - weeksLived;
+
+            // Calculate age
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            // Update stats
+            const statsDiv = document.getElementById('stats');
+            statsDiv.innerHTML = `
+                <strong>Age:</strong> ${age} years |
+                <strong>Weeks Lived:</strong> ${weeksLived.toLocaleString()} |
+                <strong>Weeks Remaining:</strong> ${weeksRemaining.toLocaleString()} (${((weeksRemaining / totalWeeks) * 100).toFixed(1)}%)
+            `;
+
+            // Reset all weeks
+            document.querySelectorAll('.week').forEach(week => {
+                week.classList.remove('filled', 'current');
+            });
+
+            // Fill in weeks
+            document.querySelectorAll('.week').forEach(week => {
+                const year = parseInt(week.dataset.year);
+                const weekNum = parseInt(week.dataset.week);
+                const totalWeekIndex = year * WEEKS_PER_YEAR + weekNum;
+
+                if (totalWeekIndex < weeksLived) {
+                    week.classList.add('filled');
+                } else if (totalWeekIndex === weeksLived) {
+                    week.classList.add('current');
+                }
+            });
+
+            // Store birthday in localStorage
+            localStorage.setItem('birthday', birthday);
+        }
+
+        // Initialize calendar on load
+        window.addEventListener('DOMContentLoaded', () => {
+            generateCalendar();
+
+            // Load saved birthday if exists
+            const savedBirthday = localStorage.getItem('birthday');
+            if (savedBirthday) {
+                document.getElementById('birthday').value = savedBirthday;
+                updateCalendar();
+            }
+        });
+    </script>
+</body>
+</html>
