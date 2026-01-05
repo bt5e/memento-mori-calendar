@@ -425,9 +425,14 @@
                 age--;
             }
 
+            // Format current date
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = today.toLocaleDateString('en-US', dateOptions);
+
             // Update stats
             const statsDiv = document.getElementById('stats');
             statsDiv.innerHTML = `
+                <strong>Today:</strong> ${formattedDate} |
                 <strong>Age:</strong> ${age} years |
                 <strong>Weeks Lived:</strong> ${weeksLived.toLocaleString()} |
                 <strong>Weeks Remaining:</strong> ${weeksRemaining.toLocaleString()} (${((weeksRemaining / totalWeeks) * 100).toFixed(1)}%)
