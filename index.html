@@ -92,38 +92,6 @@
             margin-bottom: 30px;
         }
 
-        .month-header {
-            display: flex;
-            gap: 2px;
-            align-items: center;
-            margin-bottom: 8px;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-            padding: 5px 0;
-        }
-
-        .month-header-spacer {
-            min-width: 50px;
-        }
-
-        .month-labels {
-            display: flex;
-            gap: 2px;
-            flex: 1;
-        }
-
-        .month-label {
-            font-size: 0.7em;
-            color: #888;
-            text-align: center;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .year-row {
             display: flex;
             gap: 2px;
@@ -224,14 +192,6 @@
                 min-width: 35px;
                 font-size: 0.7em;
             }
-
-            .month-header-spacer {
-                min-width: 35px;
-            }
-
-            .month-label {
-                font-size: 0.5em;
-            }
         }
     </style>
 </head>
@@ -298,29 +258,6 @@
         function generateCalendar() {
             const calendarDiv = document.getElementById('calendar');
             calendarDiv.innerHTML = '';
-
-            // Add month header row
-            const monthHeader = document.createElement('div');
-            monthHeader.className = 'month-header';
-
-            const headerSpacer = document.createElement('div');
-            headerSpacer.className = 'month-header-spacer';
-            monthHeader.appendChild(headerSpacer);
-
-            const monthLabels = document.createElement('div');
-            monthLabels.className = 'month-labels';
-
-            currentWeek = 0;
-            MONTHS.forEach(([monthName, weeksInMonth]) => {
-                const monthLabel = document.createElement('div');
-                monthLabel.className = 'month-label';
-                monthLabel.textContent = monthName;
-                monthLabel.style.width = `calc(${weeksInMonth} * (12px + 2px))`;
-                monthLabels.appendChild(monthLabel);
-            });
-
-            monthHeader.appendChild(monthLabels);
-            calendarDiv.appendChild(monthHeader);
 
             // Generate year rows
             for (let year = 0; year < TOTAL_YEARS; year++) {
