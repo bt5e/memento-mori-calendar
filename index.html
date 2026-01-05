@@ -193,6 +193,90 @@
                 font-size: 0.7em;
             }
         }
+
+        @media print {
+            @page {
+                size: letter portrait;
+                margin: 0.3in 0.25in;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            h1 {
+                font-size: 14pt;
+                margin-bottom: 2px;
+            }
+
+            .subtitle {
+                font-size: 9pt;
+                margin-bottom: 8px;
+            }
+
+            .input-section {
+                display: none;
+            }
+
+            .stats {
+                font-size: 8pt;
+                margin-bottom: 6px;
+            }
+
+            .calendar {
+                gap: 0;
+                margin-bottom: 0;
+            }
+
+            .year-row {
+                gap: 0;
+            }
+
+            .year-marker {
+                min-width: 30px;
+                font-size: 6pt;
+                padding-right: 3px;
+            }
+
+            .weeks-container {
+                gap: 0;
+            }
+
+            .week {
+                width: 2mm;
+                height: 2mm;
+                border: 0.1mm solid #999;
+                page-break-inside: avoid;
+            }
+
+            .week:hover {
+                transform: none;
+            }
+
+            .week.month-start {
+                border-left: 0.2mm solid #666;
+            }
+
+            .legend {
+                display: none;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        }
     </style>
 </head>
 <body>
