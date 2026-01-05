@@ -255,7 +255,7 @@
             }
         });
 
-        function generateCalendar() {
+        function generateCalendar(birthYear = null) {
             const calendarDiv = document.getElementById('calendar');
             calendarDiv.innerHTML = '';
 
@@ -268,7 +268,12 @@
                 const yearMarker = document.createElement('div');
                 yearMarker.className = 'year-marker';
                 if (year % 5 === 0) {
-                    yearMarker.textContent = `${year}`;
+                    if (birthYear) {
+                        const calendarYear = birthYear + year;
+                        yearMarker.textContent = `${calendarYear}`;
+                    } else {
+                        yearMarker.textContent = `${year}`;
+                    }
                 }
                 yearRow.appendChild(yearMarker);
 
@@ -318,6 +323,10 @@
 
             const birthDate = new Date(birthday);
             const today = new Date();
+            const birthYear = birthDate.getFullYear();
+
+            // Regenerate calendar with birth year for calendar year markers
+            generateCalendar(birthYear);
 
             // Calculate weeks lived
             const msPerWeek = 7 * 24 * 60 * 60 * 1000;
